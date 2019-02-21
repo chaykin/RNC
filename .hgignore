@@ -1,0 +1,11 @@
+syntax: regexp
+^target$    # maven output
+^\.gradle$  # gradle
+^build$     # gradle
+.+\.iml     # idea
+\.idea      # idea
+^out$       # idea
+^bin$       # eclipse
+\.classpath # eclipse
+\.project   # eclipse
+\.settings  # eclipse

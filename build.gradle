@@ -1,0 +1,67 @@
+plugins {
+    id 'java'
+    id 'jacoco'
+}
+
+sourceCompatibility = 11
+targetCompatibility = 11
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.4.0'
+
+    implementation 'org.tmatesoft.svnkit:svnkit:1.9.3'
+    implementation 'org.apache.commons:commons-lang3:3.8.1'
+    implementation 'org.json:json:20180813'
+
+    implementation 'org.apache.logging.log4j:log4j-api:2.11.2'
+    implementation 'org.apache.logging.log4j:log4j-core:2.11.2'
+
+    implementation 'org.freemarker:freemarker:2.3.28'
+}
+
+task copyLib(type: Copy) {
+    from configurations.compileClasspath
+    into "$buildDir/libs/libs"
+}
+
+task copyConf(type: Copy) {
+    from "$projectDir/src/main/resources-ext"
+    into "$buildDir/libs/config"
+}
+
+assemble.dependsOn copyLib
+assemble.dependsOn copyConf
+
+test {
+    useJUnitPlatform()
+    dependsOn 'cleanTest'
+
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+
+jar {
+    manifest {
+        attributes  'Main-Class': 'ru.chaykin.rnc.RNC',
+                    'Class-Path': configurations.compileClasspath.collect{ './libs/' + it.getName() }.join(' ')
+    }
+}
+
+jacoco {
+    toolVersion = "0.8.2"
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination file("${buildDir}/reports/coverage")
+    }
+}
