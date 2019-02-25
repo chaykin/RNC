@@ -1,5 +1,6 @@
 # README #
 
+
 Project for generate Release Notes file, based on svn commits with link to Redmine issues. It collects data from svn and Redmine and put it to resulting file as html
 
 ### How do I get set up? ###
