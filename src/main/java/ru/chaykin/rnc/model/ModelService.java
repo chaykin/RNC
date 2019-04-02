@@ -30,18 +30,19 @@ public class ModelService {
         for (IRedmineIssue issue : issues) {
             LOGGER.debug("Process issue {}", issue.getNum());
 
-            Map<String, Object> issueEntry = new HashMap<>();
             if (issue.getNum().equals(IssueNumParser.NO_ISSUE)) {
-                for (SVNLogEntry logEntry : issue.getLogEntries()) {
+		for (SVNLogEntry logEntry : issue.getLogEntries()) {
+		    Map<String, Object> issueEntry = new HashMap<>();
 
-                    columnsConfig.keySet().forEach(k -> issueEntry.put(k, NO_ISSUE_COL_NAME.equals(k) ? logEntry.getMessage() : ""));
+		    columnsConfig.keySet().forEach(k -> issueEntry.put(k, NO_ISSUE_COL_NAME.equals(k) ? logEntry.getMessage() : ""));
 
-                    var paths = logEntry.getChangedPaths().values().stream();
-                    issueEntry.put("changes", processChangedPaths(paths));
-                    issueEntries.add(issueEntry);
-                }
-            } else {
-                columnsConfig.forEach((k, v) -> {
+		    var paths = logEntry.getChangedPaths().values().stream();
+		    issueEntry.put("changes", processChangedPaths(paths));
+		    issueEntries.add(issueEntry);
+		}
+	    } else {
+		Map<String, Object> issueEntry = new HashMap<>();
+		columnsConfig.forEach((k, v) -> {
                     LOGGER.debug("For column '{}'", v);
                     issueEntry.put(k, new ModelValueResolver(v).getValue(issue));
                 });
